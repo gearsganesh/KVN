@@ -25,7 +25,7 @@ html{scroll-behavior:smooth}body{min-height:100dvh}.app{width:100%;padding:12px}
 </div></main>
 <script>
 const configured=window.KVN_SUPABASE_URL&&!window.KVN_SUPABASE_URL.includes("YOUR-")&&window.KVN_SUPABASE_ANON_KEY&&!window.KVN_SUPABASE_ANON_KEY.includes("YOUR-");
-const sb=configured?supabase.createClient(window.KVN_SUPABASE_URL,window.KVN_SUPABASE_ANON_KEY):null;
+const sb=configured?supabase.createClient(window.KVN_SUPABASE_URL,window.KVN_SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;
 let view=new Date(new Date().getFullYear(),new Date().getMonth(),1),rows={},mus={},selected=null,appStarted=false,realtimeChannel=null,deferredInstallPrompt=null;
 const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 const today=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())};
@@ -34,8 +34,32 @@ function shape(r){if(!r||r.morning_status==="available"&&r.evening_status==="ava
 async function start(){
  if(!sb){loginMsg.innerHTML='<div class="msg err">Configure Supabase first.</div>';return}
  const {data:{session}}=await sb.auth.getSession(); if(session) await enter(session.user); else login.classList.remove("hidden");
- sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){appStarted=false;if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null}app.classList.add("hidden");login.classList.remove("hidden")}else if(event==="SIGNED_IN"&&session&&!appStarted){enter(session.user)}});
+ sb.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT"){
+   appStarted=false;if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null}app.classList.add("hidden");login.classList.remove("hidden");
+  }else if(session&&(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"||event==="INITIAL_SESSION")&&!appStarted){
+   enter(session.user);
+  }
+ });
 }
+
+// Keep the manager signed in when the phone suspends the PWA/browser and later resumes it.
+// Supabase persists the refresh token and rotates the session; the password is never stored.
+document.addEventListener("visibilitychange",async()=>{
+ if(document.visibilityState!=="visible"||!sb)return;
+ try{
+  const {data,error}=await sb.auth.refreshSession();
+  if(error){console.warn("Foreground session refresh failed",error);return}
+  if(data.session&&!appStarted)await enter(data.session.user);
+ }catch(e){console.warn("Foreground session refresh error",e)}
+});
+window.addEventListener("pageshow",async()=>{
+ if(!sb)return;
+ try{
+  const {data}=await sb.auth.getSession();
+  if(data.session&&!appStarted)await enter(data.session.user);
+ }catch(e){console.warn("Page session restore failed",e)}
+});
 async function enter(user){
  if(appStarted)return; const uid=user?.id||(await sb.auth.getUser()).data.user?.id;if(!uid)return;
  const {data:p,error}=await sb.from("manager_profiles").select("active,role,display_name").eq("user_id",uid).maybeSingle();
