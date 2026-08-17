@@ -397,5 +397,19 @@ document.getElementById("enquiryForm").addEventListener("submit",async e=>{
 });
 loadCalendar();
 </script>
+
+<script>
+/* KVN_60S_SYNC */
+(function(){
+  const sync = async () => {
+    try {
+      if (typeof loadCalendar === 'function') await loadCalendar();
+    } catch (e) { console.warn('KVN public calendar sync failed', e); }
+  };
+  setInterval(sync, 60000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') sync(); });
+  window.addEventListener('pageshow', sync);
+})();
+</script>
 </body>
 </html>

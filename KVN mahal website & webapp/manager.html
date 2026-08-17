@@ -78,4 +78,19 @@ async function loadEnquiries(){const box=document.getElementById("enquiries");bo
 async function updateStatus(id,status){const {error}=await sb.from("enquiries").update({status,updated_at:new Date().toISOString()}).eq("id",id);if(error){notify("Unable to update enquiry: "+error.message);return}await loadEnquiries()}
 async function openBookingFromEnquiry(enquiryId){const {data:e,error}=await sb.from("enquiries").select("id,event_date,slot,name,event_type").eq("id",enquiryId).single();if(error||!e){notify("Unable to open this enquiry in the calendar");return}const d=new Date(e.event_date+"T00:00:00");view=new Date(d.getFullYear(),d.getMonth(),1);document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));document.querySelector('.tabs button[data-tab="calendarTab"]').classList.add("active");document.getElementById("calendarTab").classList.remove("hidden");document.getElementById("enquiryTab").classList.add("hidden");await loadMonth();const current=rows[e.event_date]||{morning_status:"available",evening_status:"available"};await edit(e.event_date,current,mus[e.event_date]);if(e.slot==="Morning"||e.slot==="Full Day")document.getElementById("ms").value="booked";if(e.slot==="Evening"||e.slot==="Full Day")document.getElementById("es").value="booked";if(e.slot==="Morning"||e.slot==="Full Day")document.getElementById("mi").value=e.name+(e.event_type?" • "+e.event_type:"");if(e.slot==="Evening"||e.slot==="Full Day")document.getElementById("ei").value=e.name+(e.event_type?" • "+e.event_type:"");document.getElementById("saveMsg").innerHTML='<div class="msg ok">Confirmed booking loaded. Verify the slot and click Save Changes to publish it to the calendar.</div>';window.pendingBookingEnquiryId=enquiryId}
 const refreshBtn=document.getElementById("refresh");refreshBtn.addEventListener("click",async()=>{refreshBtn.disabled=true;refreshBtn.textContent="Refreshing…";try{await loadEnquiries()}finally{refreshBtn.disabled=false;refreshBtn.textContent="Refresh"}});if("serviceWorker" in navigator){navigator.serviceWorker.register("manager-sw.js",{scope:"/"}).catch(()=>{})}window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;installBtn.classList.remove("hidden")});installBtn?.addEventListener("click",async()=>{if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;installBtn.classList.add("hidden")});window.addEventListener("appinstalled",()=>{installBtn.classList.add("hidden")});start();
-</script></body></html>
+</script>
+<script>
+/* KVN_60S_SYNC */
+(function(){
+  const sync = async () => {
+    try {
+      if (typeof loadMonth === 'function') await loadMonth();
+      if (typeof loadEnquiries === 'function') await loadEnquiries();
+    } catch (e) { console.warn('KVN manager sync failed', e); }
+  };
+  setInterval(sync, 60000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && typeof appStarted !== 'undefined' && appStarted) sync(); });
+  window.addEventListener('pageshow', () => { if (typeof appStarted !== 'undefined' && appStarted) sync(); });
+})();
+</script>
+</body></html>
