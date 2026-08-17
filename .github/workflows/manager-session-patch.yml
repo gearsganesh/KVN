@@ -1,0 +1,41 @@
+name: Fix manager session persistence
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch manager session handling
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('KVN mahal website & webapp/manager.html')
+          s = p.read_text(encoding='utf-8')
+          old = 'const sb=configured?supabase.createClient(window.KVN_SUPABASE_URL,window.KVN_SUPABASE_ANON_KEY):null;'
+          new = 'const sb=configured?supabase.createClient(window.KVN_SUPABASE_URL,window.KVN_SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}):null;'
+          if old in s:
+              s = s.replace(old, new, 1)
+          marker = '''async function start(){\n if(!sb){loginMsg.innerHTML='<div class="msg err">Configure Supabase first.</div>';return}\n const {data:{session}}=await sb.auth.getSession(); if(session) await enter(session.user); else login.classList.remove("hidden");\n sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){appStarted=false;if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null}app.classList.add("hidden");login.classList.remove("hidden")}else if(event==="SIGNED_IN"&&session&&!appStarted){enter(session.user)}});\n}'''
+          replacement = '''async function start(){\n if(!sb){loginMsg.innerHTML='<div class="msg err">Configure Supabase first.</div>';return}\n const {data:{session}}=await sb.auth.getSession(); if(session) await enter(session.user); else login.classList.remove("hidden");\n sb.auth.onAuthStateChange((event,session)=>{\n  if(event==="SIGNED_OUT"){\n   appStarted=false;if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null}app.classList.add("hidden");login.classList.remove("hidden");\n  }else if(session&&(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"||event==="INITIAL_SESSION")&&!appStarted){\n   enter(session.user);\n  }\n });\n}\n\n// Keep the manager signed in when the phone suspends the PWA/browser and later resumes it.\n// Supabase persists the refresh token and rotates the session; the password is never stored.\ndocument.addEventListener("visibilitychange",async()=>{\n if(document.visibilityState!=="visible"||!sb)return;\n try{\n  const {data,error}=await sb.auth.refreshSession();\n  if(error){console.warn("Foreground session refresh failed",error);return}\n  if(data.session&&!appStarted)await enter(data.session.user);\n }catch(e){console.warn("Foreground session refresh error",e)}\n});\nwindow.addEventListener("pageshow",async()=>{\n if(!sb)return;\n try{\n  const {data}=await sb.auth.getSession();\n  if(data.session&&!appStarted)await enter(data.session.user);\n }catch(e){console.warn("Page session restore failed",e)}\n});'''
+          if marker not in s:
+              raise SystemExit('Expected manager start() block was not found; aborting without changes.')
+          s = s.replace(marker, replacement, 1)
+          p.write_text(s, encoding='utf-8')
+      - name: Commit patch and remove temporary files
+        run: |
+          rm -f 'KVN mahal website & webapp/KEEP_SESSION_PATCH.txt'
+          rm -f '.github/workflows/fix-horizontal-calendar.yml'
+          rm -f '.github/workflows/manager-session-patch.yml'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Keep manager session signed in on mobile'
+          git push
