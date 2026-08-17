@@ -1,0 +1,57 @@
+name: Fix KVN calendar session orientation
+
+on:
+  push:
+    paths:
+      - PATCH_HORIZONTAL_CALENDAR
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch morning/evening split to horizontal
+        shell: python
+        run: |
+          from pathlib import Path
+
+          files = [
+              Path('KVN mahal website & webapp/manager.html'),
+              Path('KVN mahal website & webapp/index.html'),
+          ]
+
+          replacements = {
+              'linear-gradient(90deg,var(--gold) 0 50%,var(--wine) 50%)':
+              'linear-gradient(180deg,var(--gold) 0 50%,var(--wine) 50%)',
+              'linear-gradient(90deg,var(--wine) 0 50%,var(--gold) 50%)':
+              'linear-gradient(180deg,var(--wine) 0 50%,var(--gold) 50%)',
+              'linear-gradient(90deg,var(--available) 0 50%,var(--booked) 50% 100%)':
+              'linear-gradient(180deg,var(--available) 0 50%,var(--booked) 50% 100%)',
+              'linear-gradient(90deg,var(--booked) 0 50%,var(--available) 50% 100%)':
+              'linear-gradient(180deg,var(--booked) 0 50%,var(--available) 50% 100%)',
+          }
+
+          for path in files:
+              text = path.read_text(encoding='utf-8')
+              original = text
+              for old, new in replacements.items():
+                  text = text.replace(old, new)
+              if text == original:
+                  raise SystemExit(f'No calendar split styles changed in {path}')
+              path.write_text(text, encoding='utf-8')
+
+          Path('PATCH_HORIZONTAL_CALENDAR').unlink(missing_ok=True)
+          Path('.github/workflows/fix-horizontal-calendar.yml').unlink(missing_ok=True)
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Fix morning evening calendar orientation"
+          git push
