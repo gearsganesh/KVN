@@ -1,0 +1,4 @@
+KVN Weddings & Conventions
+Supabase Project URL: https://xtdvdxpabxjryaqkcrcc.supabase.co
+Supabase Publishable Key: sb_publishable_2t_AblKyPQ3fFsCxMARMiQ_56-IHCAh
+No external Muhurtham API is used by this production build.

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KVN Weddings & Conventions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+:root{
+  --wine:#6e1746; --wine2:#8d2c5d; --gold:#b58a45; --cream:#f7f0df;
+  --ink:#2c211b; --available:#d0a14b; --booked:#76223a; --line:#e5d7bc;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:Inter,Arial,sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;background-image:radial-gradient(#8b6b46 0.6px,transparent .6px);background-size:7px 7px;z-index:-1}
+nav{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(255,251,240,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1180px;margin:auto;height:76px;padding:8px 20px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px;color:var(--wine);font-family:Georgia,serif;text-decoration:none}
+.brand img{width:55px;height:55px;border-radius:50%;object-fit:cover}
+.brand span{font-size:1.05rem;line-height:1.05}.brand small{display:block;font:10px Inter;color:#7b6b5e;letter-spacing:1.5px;margin-top:3px}
+nav a{color:var(--ink);text-decoration:none;margin-left:24px;font-size:.9rem}
+.hero{min-height:92vh;padding:120px 20px 60px;display:grid;place-items:center;background:
+linear-gradient(90deg,rgba(20,12,8,.74),rgba(20,12,8,.32)),
+url("assets/hall_lobby.webp") center/cover;position:relative}
+.hero-card{max-width:900px;text-align:center;color:#fff}
+.hero-logo{width:120px;height:120px;border-radius:50%;margin-bottom:18px}
+.kicker{letter-spacing:4px;text-transform:uppercase;font-size:.72rem}
+h1,h2,h3{font-family:"Cormorant Garamond",Georgia,serif}
+h1{font-size:clamp(3.2rem,8vw,6.5rem);line-height:.85;margin:15px 0}
+.hero p{font-size:1.05rem;line-height:1.8;max-width:700px;margin:0 auto 28px;color:#f8eee0}
+.btn{display:inline-block;padding:14px 25px;border-radius:999px;background:#fff8e9;color:var(--wine);font-weight:700;text-decoration:none}
+section{max-width:1180px;margin:auto;padding:85px 20px}
+.eyebrow{text-align:center;color:var(--gold);font-weight:700;letter-spacing:3px;font-size:.7rem;text-transform:uppercase}
+.section-title{text-align:center;font-size:3rem;margin:7px 0 12px;color:var(--wine)}
+.section-sub{text-align:center;max-width:720px;margin:0 auto 40px;color:#75675c;line-height:1.8}
+.feature-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:25px;align-items:stretch}
+.feature-grid img{width:100%;height:100%;min-height:450px;object-fit:cover;border-radius:22px}
+.feature-copy{background:#fffaf0;border:1px solid var(--line);border-radius:22px;padding:38px}
+.feature-copy h3{font-size:2.3rem;color:var(--wine);margin:0 0 12px}
+.feature-copy p{line-height:1.8;color:#665b52}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+.stat{padding:18px;border:1px solid var(--line);border-radius:15px;background:#fffdf7;text-align:center}
+.stat b{display:block;color:var(--wine);font:700 2rem Georgia,serif}.stat span{font-size:.78rem;color:#777}
+.gallery{display:grid;grid-template-columns:1.3fr .7fr .7fr;gap:13px}
+.gallery figure{margin:0;position:relative;overflow:hidden;border-radius:20px;background:#ddd}
+.gallery img{display:block;width:100%;height:260px;object-fit:cover;transition:.35s}
+.gallery figure:first-child{grid-row:span 2}.gallery figure:first-child img{height:533px}
+.gallery figure:hover img{transform:scale(1.04)}
+.gallery figcaption{position:absolute;left:0;right:0;bottom:0;padding:35px 15px 15px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75));font-weight:600}
+.calendar-wrap{background:#fffdf8;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 15px 45px rgba(80,45,20,.08)}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.cal-head button{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:#fff;font-size:1.3rem;cursor:pointer;color:var(--wine)}
+.month-title{text-align:center;font:600 2rem "Cormorant Garamond",Georgia,serif;color:var(--wine)}
+.weekdays,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.weekdays div{text-align:center;color:#8a7b6b;font-size:.75rem;font-weight:700;padding:8px 0}
+.day{min-height:95px;border:1px solid #eee4d3;border-radius:15px;background:#fff;padding:8px;position:relative;cursor:pointer}
+.day:hover{box-shadow:0 7px 20px rgba(70,40,20,.1)} .day.muted{opacity:.25;cursor:default}.day.past{opacity:.32;background:#f0ede7;color:#999;cursor:default}.day.past .dot{filter:grayscale(1);opacity:.45}.day.past .star{opacity:.45}
+.day-num{position:relative;z-index:3;font-weight:800}
+.dot{width:53px;height:53px;border-radius:50%;position:absolute;left:50%;top:29px;transform:translateX(-50%);box-shadow:0 3px 9px rgba(0,0,0,.12)}
+.dot.available{background:var(--available)} .dot.booked{background:var(--booked)}
+.dot.morning{background:linear-gradient(90deg,var(--available) 0 50%,var(--booked) 50% 100%)}
+.dot.evening{background:linear-gradient(90deg,var(--booked) 0 50%,var(--available) 50% 100%)}
+.star{position:absolute;left:50%;top:40px;transform:translateX(-50%);color:#fff;font-size:22px;z-index:4;text-shadow:0 1px 4px #333}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:13px 22px;margin-top:22px;font-size:.82rem;color:#665c54}
+.legend span{display:inline-flex;align-items:center;gap:7px}.mini{width:15px;height:15px;border-radius:50%;display:inline-block}
+.half-am{background:linear-gradient(90deg,var(--available) 0 50%,var(--booked) 50%)}.half-pm{background:linear-gradient(90deg,var(--booked) 0 50%,var(--available) 50%)}
+.contact{max-width:none;background:#2d171f;color:#fff}.contact-inner{max-width:1180px;margin:auto;padding:75px 20px;text-align:center}.contact .section-title{color:#fff}.contact p{color:#eadfd2;line-height:1.7}
+footer{text-align:center;padding:25px;color:#8a7b6b;font-size:.78rem}
+.modal{position:fixed;inset:0;background:rgba(25,13,17,.62);display:none;align-items:center;justify-content:center;padding:20px;z-index:30}.modal.show{display:flex}
+.modal-box{background:#fffaf0;border-radius:22px;padding:28px;max-width:430px;width:100%;position:relative;border:1px solid var(--line)}.close{position:absolute;right:15px;top:10px;border:0;background:none;font-size:1.6rem;cursor:pointer;color:var(--wine)}
+
+
+/* Mobile-friendly enquiry modal */
+.modal{
+  align-items:flex-start;
+  padding:12px;
+  overflow-y:auto;
+}
+.enquiry-box{
+  max-width:560px;
+  max-height:calc(100dvh - 24px);
+  overflow-y:auto;
+  padding:22px 20px 18px;
+  margin:auto;
+  overscroll-behavior:contain;
+}
+.enquiry-box .close{
+  position:sticky;
+  float:right;
+  top:0;
+  right:auto;
+  z-index:5;
+  width:42px;
+  height:42px;
+  margin:-7px -5px 0 0;
+  border-radius:50%;
+  background:#fffaf0;
+  border:1px solid #e5d7bc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+.enquiry-box h2{clear:both;padding-top:2px}
+.slot-options{display:grid;grid-template-columns:1fr;gap:9px}
+.slot-options label{
+  min-height:52px;
+  display:flex;
+  align-items:center;
+  padding:12px 14px;
+  border:1px solid #d9ccb8;
+  border-radius:12px;
+  background:#fff;
+  cursor:pointer;
+  font-size:.9rem;
+}
+.slot-options input{width:20px;height:20px;margin:0 10px 0 0;accent-color:var(--wine)}
+.form-group input,.form-group select,.form-group textarea{
+  min-height:48px;
+  font-size:16px;
+}
+.form-group textarea{min-height:105px}
+.submit-btn{
+  position:sticky;
+  bottom:0;
+  min-height:50px;
+  margin-top:5px;
+  box-shadow:0 -8px 15px rgba(255,250,240,.95);
+}
+
+.enquiry-box{max-width:560px}
+.enquiry-box h2{margin-right:35px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:.78rem;font-weight:700;color:#66584d}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 13px;border:1px solid #dccfb9;border-radius:10px;background:#fffdf8;font:inherit;color:#2c211b}
+.form-group textarea{min-height:90px;resize:vertical}
+.slot-box{padding:12px 14px;border-radius:12px;background:#fbf4e5;border:1px solid #ead9b9;margin-bottom:14px}
+.slot-options{display:flex;gap:10px;flex-wrap:wrap;margin-top:9px}
+.slot-options label{border:1px solid #d9ccb8;border-radius:9px;padding:9px 12px;background:#fff;cursor:pointer;font-size:.84rem}
+.slot-options input{margin-right:5px}
+.submit-btn{width:100%;border:0;border-radius:999px;padding:13px 18px;background:var(--wine);color:#fff;font-weight:700;cursor:pointer}
+.submit-btn:disabled{opacity:.6;cursor:wait}
+.form-message{margin-top:12px;padding:10px 12px;border-radius:10px;display:none;font-size:.85rem;line-height:1.5}
+.form-message.show{display:block}.form-message.ok{background:#eaf8ef;color:#146c36}.form-message.err{background:#fff0f0;color:#a52229}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}}
+
+
+.whatsapp-float{
+  position:fixed;right:22px;bottom:22px;width:58px;height:58px;border-radius:50%;
+  background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;
+  text-decoration:none;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.22);
+  transition:transform .2s,box-shadow .2s
+}
+.whatsapp-float:hover{transform:scale(1.08);box-shadow:0 10px 28px rgba(0,0,0,.28)}
+.whatsapp-float svg{width:31px;height:31px;fill:#fff}
+
+@media(max-width:850px){nav a{margin-left:10px}.feature-grid{grid-template-columns:1fr}.feature-grid img{min-height:320px}.stats{grid-template-columns:repeat(2,1fr)}.gallery{grid-template-columns:1fr 1fr}.gallery figure:first-child{grid-column:span 2;grid-row:auto}.gallery figure:first-child img{height:300px}}
+@media(max-width:560px){.nav-inner{height:68px}.brand img{width:48px;height:48px}nav a{display:none}.hero{min-height:78vh;padding-top:95px}.hero-logo{width:95px;height:95px}section{padding:58px 14px}.section-title{font-size:2.45rem}.calendar-wrap{padding:10px}.day{min-height:73px;padding:6px}.dot{width:39px;height:39px;top:27px}.star{top:34px;font-size:17px}.weekdays,.days{gap:4px}.gallery{grid-template-columns:1fr}.gallery figure:first-child{grid-column:auto}.gallery figure:first-child img{height:270px}.gallery img{height:220px}}
+
+/* Final mobile optimization */
+section{content-visibility:auto;contain-intrinsic-size:700px}
+img{max-width:100%;height:auto}
+.gallery img{loading:auto}
+@media(max-width:700px){
+  .nav-inner{height:64px;padding:6px 12px}
+  .brand{gap:8px}.brand img{width:44px;height:44px}.brand span{font-size:.9rem}.brand small{font-size:8px;letter-spacing:1.1px}
+  nav .nav-links{display:flex;overflow-x:auto;gap:4px;max-width:58%;scrollbar-width:none}
+  nav .nav-links::-webkit-scrollbar{display:none}
+  nav a{display:block;margin:0;padding:8px 7px;font-size:.78rem;white-space:nowrap}
+  .hero{min-height:82vh;padding:92px 14px 44px;background-position:center}
+  .hero-card{width:100%}.hero-logo{width:88px;height:88px;margin-bottom:12px}.kicker{font-size:.62rem;letter-spacing:2.5px}
+  h1{font-size:clamp(2.7rem,15vw,4.4rem);line-height:.88}.hero p{font-size:.9rem;line-height:1.6}.btn{padding:13px 18px}
+  section{padding:48px 12px}.section-title{font-size:2.25rem}.section-sub{font-size:.9rem;line-height:1.65;margin-bottom:24px}
+  .feature-grid{gap:14px}.feature-grid img{min-height:250px;border-radius:16px}.feature-copy{padding:22px;border-radius:16px}.feature-copy h3{font-size:1.9rem}.feature-copy p{font-size:.9rem;line-height:1.65}
+  .stats{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:13px 8px}.stat b{font-size:1.55rem}.stat span{font-size:.7rem}
+  .gallery{gap:9px}.gallery figure{border-radius:14px}.gallery figure:first-child img{height:250px}.gallery img{height:190px}.gallery figcaption{font-size:.78rem;padding:28px 10px 10px}
+  .calendar-wrap{padding:10px;border-radius:18px}.cal-head{margin-bottom:10px}.cal-head button{width:40px;height:40px}.month-title{font-size:1.55rem}.weekdays,.days{gap:3px}.weekdays div{font-size:.63rem;padding:6px 0}
+  .day{min-height:68px;border-radius:11px;padding:5px}.day-num{font-size:.82rem}.dot{width:36px;height:36px;top:25px}.star{top:31px;font-size:16px}.legend{gap:9px 12px;margin-top:16px;font-size:.72rem}.mini{width:12px;height:12px}
+  .contact-inner{padding:52px 14px}.contact p{font-size:.88rem}.whatsapp-float{width:54px;height:54px;right:14px;bottom:14px}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="brand" href="#">
+      <img src="assets/logo.webp" alt="KVN Weddings & Conventions logo">
+      <span>KVN<br><small>WEDDINGS & CONVENTIONS</small></span>
+    </a>
+    <div class="nav-links">
+      <a href="#about">About</a><a href="#gallery">Gallery</a><a href="#availability">Availability</a><a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-card">
+    <img class="hero-logo" src="assets/logo.webp" alt="KVN logo">
+    <div class="kicker">Weddings • Receptions • Conventions</div>
+    <h1>Moments.<br>Memories. Forever.</h1>
+    <p>A grand setting for weddings, receptions and celebrations, presented with the elegance reflected in KVN Weddings & Conventions' own visual identity.</p>
+    <a class="btn" href="#availability">Check Availability &amp; Enquire</a>
+  </div>
+</header>
+
+<section id="about">
+  <div class="eyebrow">KVN Weddings & Conventions</div>
+  <h2 class="section-title">Celebration Begins</h2>
+  <p class="section-sub">A refined venue designed for grand celebrations, with spacious interiors, a distinctive chandelier-lit entrance and a hall made for memorable occasions.</p>
+  <div class="feature-grid">
+    <img src="assets/hall_seating.webp" alt="KVN convention hall seating">
+    <div class="feature-copy">
+      <h3>Made for Grand Moments</h3>
+      <p>From the first arrival to the final reception, KVN brings together elegant interiors, a spacious celebration hall and a setting designed around weddings and conventions.</p>
+      <p><b>Two independent booking sessions</b> make the venue calendar especially useful: a morning marriage can be booked independently from an evening reception or function.</p>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="eyebrow">Inside KVN</div>
+  <h2 class="section-title">Majestic Moments</h2>
+  <p class="section-sub">The gallery below uses the venue photographs supplied from KVN's social-media material, cropped into individual visual assets for the website.</p>
+  <div class="gallery">
+    <figure><img src="assets/hall_lobby.webp" alt="KVN entrance and chandelier lobby" loading="lazy" decoding="async"><figcaption>Signature entrance & chandelier lobby</figcaption></figure>
+    <figure><img src="assets/entrance.webp" alt="KVN entrance" loading="lazy" decoding="async"><figcaption>Entrance</figcaption></figure>
+    <figure><img src="assets/chandelier.webp" alt="KVN chandelier interior" loading="lazy" decoding="async"><figcaption>Grand interiors</figcaption></figure>
+    <figure><img src="assets/feature_wall.webp" alt="KVN feature wall" loading="lazy" decoding="async"><figcaption>Feature wall</figcaption></figure>
+    <figure><img src="assets/hall_seating.webp" alt="KVN hall seating" loading="lazy" decoding="async"><figcaption>Convention hall</figcaption></figure>
+  </div>
+</section>
+
+<section id="availability">
+  <div class="eyebrow">Plan Your Date</div>
+  <h2 class="section-title">Availability Calendar</h2>
+  <p class="section-sub">Each date represents two independent slots: <b>morning marriage</b> and <b>evening reception / function</b>. ⭐ is calculated from the Tamil/Indian marriage Muhurta engine for KVN, Chennai.</p>
+  <div class="calendar-wrap">
+    <div class="cal-head"><button id="prev">‹</button><div class="month-title" id="monthTitle"></div><button id="next">›</button></div>
+    <div class="weekdays"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+    <div class="days" id="days"></div>
+    <div class="legend">
+      <span><i class="mini" style="background:var(--available)"></i> Full Day Available</span>
+      <span><i class="mini" style="background:var(--booked)"></i> Full Day Booked</span>
+      <span><i class="mini half-am"></i> Morning Available / Evening Booked</span>
+      <span><i class="mini half-pm"></i> Morning Booked / Evening Available</span>
+      <span>⭐ Auspicious / Muhurtham day</span>
+    </div>
+    
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="contact-inner">
+    <div class="eyebrow" style="color:#d5ad67">KVN</div>
+    <h2 class="section-title">Moments Made Eternal</h2>
+    <p><b>KVN Weddings &amp; Conventions</b><br>
+    No. 1, Poonamallee High Road, Velappanchavadi, Chennai, Tamil Nadu</p>
+    <p>
+      <a href="tel:+919444009900" style="color:#fff;text-decoration:none">📞 94440 09900</a><br>
+      <a href="mailto:info@kvnmahal.com" style="color:#fff;text-decoration:none">✉ info@kvnmahal.com</a>
+    </p>
+    <p>
+      <a class="btn" href="https://www.google.com/maps?q=13.061078,80.143041" target="_blank" rel="noopener">Open in Google Maps</a>
+    </p>
+  </div>
+</section>
+
+<footer>© 2026 KVN Weddings & Conventions • Prototype</footer>
+
+<a class="whatsapp-float" href="https://wa.me/919444009900" target="_blank" rel="noopener" aria-label="Chat with KVN on WhatsApp" title="WhatsApp KVN">
+  <svg viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M19.11 17.19c-.27-.14-1.59-.78-1.83-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.13-.42-2.15-1.33-.79-.7-1.33-1.56-1.49-1.83-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.29s.98 2.66 1.11 2.84c.14.18 1.92 2.94 4.65 4.12.65.28 1.15.45 1.54.58.65.21 1.24.18 1.71.11.52-.08 1.59-.65 1.81-1.27.23-.62.23-1.15.16-1.27-.07-.11-.25-.18-.52-.32z"/>
+    <path d="M16.03 3.2c-7.08 0-12.84 5.75-12.84 12.83 0 2.26.59 4.47 1.72 6.42L3.08 28.8l6.5-1.7a12.83 12.83 0 0 0 6.45 1.74h.01c7.08 0 12.83-5.76 12.83-12.84S23.12 3.2 16.03 3.2zm0 23.53h-.01a10.68 10.68 0 0 1-5.45-1.49l-.39-.23-3.86 1.01 1.03-3.76-.25-.39a10.67 10.67 0 1 1 8.93 4.86z"/>
+  </svg>
+</a>
+
+<div class="modal" id="modal">
+  <div class="modal-box enquiry-box">
+    <button class="close" id="close">×</button>
+    <h2>Check Availability &amp; Enquire</h2>
+    <div class="slot-box">
+      <b id="selectedDate"></b>
+      <div style="margin-top:5px;color:#6f6258;font-size:.85rem">Only the available session(s) are offered below.</div>
+      <div class="slot-options" id="slotOptions"></div>
+    </div>
+
+    <form name="kvn-enquiry" method="POST" id="enquiryForm">
+      
+      
+      <input type="hidden" name="event-date" id="eventDate">
+      <input type="hidden" name="availability-type" id="availabilityType">
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input id="name" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Mobile Number *</label>
+          <input id="phone" name="phone" type="tel" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email">
+        </div>
+        <div class="form-group">
+          <label for="eventType">Event Type *</label>
+          <select id="eventType" name="event-type" required>
+            <option value="">Select</option>
+            <option>Marriage</option>
+            <option>Reception</option>
+            <option>Marriage + Reception</option>
+            <option>Family Function</option>
+            <option>Corporate / Convention</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="guests">Approx. Number of Guests</label>
+          <input id="guests" name="guest-count" type="number" min="1">
+        </div>
+        <div class="form-group full">
+          <label for="message">Message / Requirements</label>
+          <textarea id="message" name="message" placeholder="Tell us anything the manager should know."></textarea>
+        </div>
+      </div>
+
+      <button class="submit-btn" type="submit" id="submitBtn">Send Enquiry</button>
+      <div class="form-message" id="formMessage"></div>
+    </form>
+  </div>
+</div>
+
+<script>
+const configured=window.KVN_SUPABASE_URL && !window.KVN_SUPABASE_URL.includes("YOUR-") && window.KVN_SUPABASE_ANON_KEY && !window.KVN_SUPABASE_ANON_KEY.includes("YOUR-");
+const sb=configured?supabase.createClient(window.KVN_SUPABASE_URL,window.KVN_SUPABASE_ANON_KEY):null;
+let view=new Date(new Date().getFullYear(),new Date().getMonth(),1), calendar={}, muhurtam={};
+function iso(y,m,d){return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`}
+function cls(x){if(!x.morning&&!x.evening)return"available";if(x.morning&&x.evening)return"booked";return x.evening?"morning":"evening"}
+function monthBounds(y,m){const first=iso(y,m,1), lastDate=new Date(y,m+1,0).getDate(); return [first,iso(y,m,lastDate)]}
+async function loadCalendar(){
+  calendar={}; muhurtam={};
+  if(!sb){render();return}
+  const y=view.getFullYear(),m=view.getMonth(),[from,to]=monthBounds(y,m);
+  const [c,mu]=await Promise.all([
+    sb.from("calendar_dates").select("date,morning_status,evening_status").gte("date",from).lte("date",to),
+    sb.from("muhurtham_dates").select("date,is_muhurtham,admin_override,score,start_time,end_time,panchanga,source").gte("date",from).lte("date",to)
+  ]);
+  if(!c.error)(c.data||[]).forEach(r=>calendar[r.date]={morning:r.morning_status==="booked",evening:r.evening_status==="booked"});
+  if(!mu.error)(mu.data||[]).forEach(r=>muhurtam[r.date]={auspicious:r.admin_override===null?r.is_muhurtham:r.admin_override,score:r.score,start_time:r.start_time,end_time:r.end_time,panchanga:r.panchanga,source:r.source});
+  render();
+}
+function render(){
+  const y=view.getFullYear(),m=view.getMonth(),days=document.getElementById("days");
+  document.getElementById("monthTitle").textContent=view.toLocaleDateString("en-IN",{month:"long",year:"numeric"}); days.innerHTML="";
+  const first=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();
+  const n=new Date(),today=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+  for(let i=0;i<first;i++){let e=document.createElement("div");e.className="day past";days.appendChild(e)}
+  for(let d=1;d<=count;d++){
+    const k=iso(y,m,d),x=calendar[k]||{morning:false,evening:false},mu=muhurtam[k],date=new Date(y,m,d),past=date<today;
+    let e=document.createElement("div");e.className="day"+(past?" past":"");
+    e.innerHTML=`<div class="day-num">${d}</div><div class="dot ${cls(x)}"></div>${mu?.auspicious?'<div class="star" title="Tamil Muhurtham">★</div>':''}`;
+    if(!past && !(x.morning&&x.evening)) e.onclick=()=>openEnquiry(y,m,d,x,mu); days.appendChild(e);
+  }
+}
+function openEnquiry(y,m,d,x,mu){
+  const dateText=new Date(y,m,d).toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"});
+  document.getElementById("selectedDate").textContent=dateText;
+  document.getElementById("eventDate").value=iso(y,m,d);
+  const opts=document.getElementById("slotOptions"); let h="";
+  if(!x.morning) h+='<label><input type="radio" name="slot_choice" value="Morning"> Morning — Marriage</label>';
+  if(!x.evening) h+='<label><input type="radio" name="slot_choice" value="Evening"> Evening — Reception / Function</label>';
+  if(!x.morning&&!x.evening) h+='<label><input type="radio" name="slot_choice" value="Full Day"> Full Day</label>';
+  opts.innerHTML=h; const first=opts.querySelector("input"); if(first) first.checked=true;
+  document.getElementById("formMessage").className="form-message"; document.getElementById("formMessage").textContent="";
+  document.getElementById("modal").classList.add("show"); document.querySelector(".modal-box")?.scrollTo(0,0);
+}
+document.getElementById("prev").onclick=()=>{view.setMonth(view.getMonth()-1);loadCalendar()};
+document.getElementById("next").onclick=()=>{view.setMonth(view.getMonth()+1);loadCalendar()};
+document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("show");
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")e.target.classList.remove("show")};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("modal").classList.remove("show")});
+document.getElementById("enquiryForm").addEventListener("submit",async e=>{
+  e.preventDefault(); const form=e.target,msg=document.getElementById("formMessage"),btn=document.getElementById("submitBtn");
+  const slot=document.querySelector('input[name="slot_choice"]:checked');
+  if(!slot){msg.textContent="Please select a session.";msg.className="form-message show err";return}
+  if(!sb){msg.textContent="The enquiry system is temporarily unavailable. Please call KVN.";msg.className="form-message show err";return}
+  btn.disabled=true;btn.textContent="Sending…";
+  const fd=new FormData(form); const p=Object.fromEntries(fd.entries());
+  const {error}=await sb.from("enquiries").insert({event_date:p["event-date"],slot:slot.value,name:p.name,phone:p.phone,email:p.email||null,event_type:p["event-type"],guest_count:p["guest-count"]?Number(p["guest-count"]):null,message:p.message||null,status:"new"});
+  if(error){msg.textContent="Unable to submit right now. Please call or WhatsApp KVN.";msg.className="form-message show err"}
+  else {msg.textContent="Enquiry sent successfully. The KVN manager will contact you. This enquiry does not reserve or book the date.";msg.className="form-message show ok";form.reset();setTimeout(()=>document.getElementById("modal").classList.remove("show"),2200)}
+  btn.disabled=false;btn.textContent="Send Enquiry";
+});
+loadCalendar();
+</script>
+</body>
+</html>

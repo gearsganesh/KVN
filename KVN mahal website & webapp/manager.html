@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6e1746"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="KVN Manager"><link rel="apple-touch-icon" href="assets/kvn-icon-192.png"><link rel="manifest" href="manager-manifest.json">
+<title>KVN Manager</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script>
+<style>
+:root{--wine:#6e1746;--gold:#d1a64f;--bg:#f7f0df;--line:#e5d7bc;--ink:#2c211b;--muted:#75675c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}.app{max-width:900px;margin:auto;padding:12px}.top,.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.brand{display:flex;align-items:center;gap:9px;color:var(--wine);font-weight:800}.brand img{width:46px;height:46px;border-radius:50%}.card{background:#fffaf0;border:1px solid var(--line);border-radius:17px;padding:15px;margin-bottom:12px}.hidden{display:none}.login{max-width:420px;margin:12vh auto}.h{font:600 2rem Georgia,serif;color:var(--wine);margin:6px 0 12px}label{display:block;font-size:.76rem;font-weight:700;color:#66584d;margin:9px 0 5px}input,select,textarea{width:100%;min-height:46px;border:1px solid #d8c9b2;border-radius:10px;padding:11px;font:16px system-ui;background:#fff}textarea{min-height:90px}.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--wine);color:#fff;font-weight:700}.light{background:#fff;color:var(--wine);border:1px solid var(--line)}.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{flex:1}.tabs .active{background:var(--wine);color:#fff}.calendar-head{display:flex;justify-content:space-between;align-items:center}.month{font:600 1.6rem Georgia,serif;color:var(--wine)}.week,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.week div{text-align:center;color:#8a7b6b;font-size:.68rem;padding:6px}.day{min-height:70px;border:1px solid #eee2cf;border-radius:10px;background:#fff;padding:6px;cursor:pointer}.day.selected{outline:3px solid rgba(110,23,70,.15)}.past{opacity:.28}.circle{width:34px;height:34px;border-radius:50%;margin:3px auto}.avail{background:var(--gold)}.booked{background:var(--wine)}.am{background:linear-gradient(90deg,var(--gold) 0 50%,var(--wine) 50%)}.pm{background:linear-gradient(90deg,var(--wine) 0 50%,var(--gold) 50%)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.enq{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px;transition:opacity .2s,filter .2s,background .2s}.enq.resolved{opacity:.52;filter:saturate(.55);background:#f2eee6}.enq.resolved .status{background:#e3ddd2;color:#6b6258}.enq.resolved .btn{opacity:1;filter:none}.small{font-size:.8rem;color:var(--muted);line-height:1.5}.status{font-size:.7rem;font-weight:800;background:#f3e8d2;padding:5px 8px;border-radius:99px}.msg{padding:9px;border-radius:9px;margin-top:8px;font-size:.82rem}.live-notify{position:sticky;top:112px;z-index:25;box-shadow:0 6px 18px rgba(60,35,20,.12)}.ok{background:#eaf8ef;color:#146c36}.err{background:#fff0f0;color:#a52229}@media(max-width:600px){.grid{grid-template-columns:1fr}.day{min-height:62px}.circle{width:30px;height:30px}}
+
+/* Final manager/admin mobile optimization */
+html{scroll-behavior:smooth}body{min-height:100dvh}.app{width:100%;padding:12px}.top{position:sticky;top:0;z-index:20;background:rgba(247,240,223,.94);backdrop-filter:blur(10px);padding:8px 0;margin-bottom:8px}.tabs{position:sticky;top:64px;z-index:19;background:rgba(247,240,223,.94);padding:6px 0;margin-bottom:10px}.tabs button{min-height:46px}.calendar-head{gap:8px}.calendar-head .btn{min-width:44px;min-height:44px;padding:8px}.day{min-height:82px;display:flex;flex-direction:column;position:relative;touch-action:manipulation}.day b{font-size:.82rem}.circle{flex:none}.day.selected{outline:3px solid rgba(110,23,70,.18)}#editor{scroll-margin-top:120px}.enq{box-shadow:0 2px 8px rgba(60,35,20,.04)}.enq .row{align-items:flex-start}.enq select{min-height:44px}.msg{word-break:break-word}
+@media(max-width:700px){
+  .app{padding:8px}.top{padding:7px 2px}.brand img{width:42px;height:42px}.brand{font-size:.9rem}.top>.btn{min-height:42px;padding:9px 12px}
+  .tabs{top:58px}.tabs button{font-size:.86rem}
+  .card{padding:12px;border-radius:14px}.login{margin:7vh auto 0}.h{font-size:1.7rem}
+  .calendar-head .month{font-size:1.3rem;text-align:center;flex:1}.week,.days{gap:3px}.week div{font-size:.61rem}.day{min-height:70px;padding:5px;border-radius:9px}.circle{width:31px;height:31px;margin:4px auto 0}.grid{grid-template-columns:1fr}.editor-actions{position:sticky;bottom:0;background:#fffaf0;padding-top:8px}.enq{padding:11px}.enq p{font-size:.86rem;line-height:1.5}.status{white-space:nowrap}.row{flex-wrap:wrap}
+}
+@media(max-width:420px){.app{padding:6px}.top .brand span{font-size:.82rem}.tabs button{padding:9px 8px}.day{min-height:62px}.circle{width:27px;height:27px}.week div{font-size:.55rem}.month{font-size:1.18rem!important}.login{margin-top:4vh}.login input,.login select,.login textarea,.login .btn{min-height:48px}.editor-actions .btn{min-height:48px}}
+</style></head><body><main class="app">
+<div id="login" class="card login"><div class="brand"><img src="assets/logo.webp"><span>KVN Admin / Manager</span></div><h1 class="h">KVN Admin / Manager Login</h1><label>Email</label><input id="email" type="email" autocomplete="username"><label>Password</label><input id="password" type="password" autocomplete="current-password"><button class="btn" style="width:100%;margin-top:10px" id="loginBtn">Login</button><div id="loginMsg"></div></div>
+<div id="app" class="hidden"><div class="top"><div class="brand"><img src="assets/logo.webp"><span>KVN Admin / Manager</span></div><div style="display:flex;gap:7px;align-items:center"><button class="btn light hidden" id="installBtn">Install App</button><button class="btn light" id="logout">Logout</button></div></div>
+<div class="tabs"><button class="btn active" data-tab="calendarTab">Calendar</button><button class="btn light" data-tab="enquiryTab">Enquiries</button></div>
+<section id="calendarTab"><div class="card"><div class="calendar-head"><button class="btn light" id="prev">‹</button><div class="month" id="month"></div><button class="btn light" id="next">›</button></div><div class="week"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div><div class="days" id="days"></div></div><div class="card" id="editor"><div class="h">Select a date</div><div class="small">Choose a date to edit availability and private manager notes.</div></div></section>
+<section id="enquiryTab" class="hidden"><div class="card"><div class="row"><div class="h">Enquiries</div><button class="btn light" id="refresh">Refresh</button></div><div id="enquiries">Loading…</div></div></section>
+</div></main>
+<script>
+const configured=window.KVN_SUPABASE_URL&&!window.KVN_SUPABASE_URL.includes("YOUR-")&&window.KVN_SUPABASE_ANON_KEY&&!window.KVN_SUPABASE_ANON_KEY.includes("YOUR-");
+const sb=configured?supabase.createClient(window.KVN_SUPABASE_URL,window.KVN_SUPABASE_ANON_KEY):null;
+let view=new Date(new Date().getFullYear(),new Date().getMonth(),1),rows={},mus={},selected=null,appStarted=false,realtimeChannel=null,deferredInstallPrompt=null;
+const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+const today=()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())};
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function shape(r){if(!r||r.morning_status==="available"&&r.evening_status==="available")return"avail";if(r.morning_status==="booked"&&r.evening_status==="booked")return"booked";return r.evening_status==="booked"?"am":"pm"}
+async function start(){
+ if(!sb){loginMsg.innerHTML='<div class="msg err">Configure Supabase first.</div>';return}
+ const {data:{session}}=await sb.auth.getSession(); if(session) await enter(session.user); else login.classList.remove("hidden");
+ sb.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){appStarted=false;if(realtimeChannel){sb.removeChannel(realtimeChannel);realtimeChannel=null}app.classList.add("hidden");login.classList.remove("hidden")}else if(event==="SIGNED_IN"&&session&&!appStarted){enter(session.user)}});
+}
+async function enter(user){
+ if(appStarted)return; const uid=user?.id||(await sb.auth.getUser()).data.user?.id;if(!uid)return;
+ const {data:p,error}=await sb.from("manager_profiles").select("active,role,display_name").eq("user_id",uid).maybeSingle();
+ if(error||!p?.active){loginMsg.innerHTML='<div class="msg err">Not authorized.</div>';await sb.auth.signOut();return}
+ appStarted=true;login.classList.add("hidden");app.classList.remove("hidden");await loadMonth();await loadEnquiries();startRealtime();
+}
+function startRealtime(){
+ if(realtimeChannel)sb.removeChannel(realtimeChannel);
+ realtimeChannel=sb.channel("kvn-manager-live")
+ .on("postgres_changes",{event:"INSERT",schema:"public",table:"enquiries"},()=>{loadEnquiries();notify("New KVN enquiry received")})
+ .on("postgres_changes",{event:"UPDATE",schema:"public",table:"enquiries"},loadEnquiries)
+ .on("postgres_changes",{event:"*",schema:"public",table:"calendar_dates"},loadMonth)
+ .on("postgres_changes",{event:"*",schema:"public",table:"muhurtham_dates"},loadMonth)
+ .subscribe();
+}
+function notify(text){const el=document.createElement("div");el.className="msg ok live-notify";el.textContent="🔔 "+text;document.querySelector("#enquiryTab .card")?.prepend(el);setTimeout(()=>el.remove(),5000)}
+loginBtn.onclick=async()=>{loginMsg.innerHTML="";const {error}=await sb.auth.signInWithPassword({email:email.value.trim(),password:password.value});if(error)loginMsg.innerHTML='<div class="msg err">'+esc(error.message)+'</div>'};
+logout.onclick=()=>sb.auth.signOut();
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");calendarTab.classList.toggle("hidden",b.dataset.tab!=="calendarTab");enquiryTab.classList.toggle("hidden",b.dataset.tab!=="enquiryTab")});
+prev.onclick=()=>{view.setMonth(view.getMonth()-1);loadMonth()};next.onclick=()=>{view.setMonth(view.getMonth()+1);loadMonth()};
+async function loadMonth(){
+ rows={};mus={}; const y=view.getFullYear(),m=view.getMonth(),from=key(y,m,1),to=key(y,m,new Date(y,m+1,0).getDate());
+ const [c,mu]=await Promise.all([sb.from("calendar_dates").select("*").gte("date",from).lte("date",to),sb.from("muhurtham_dates").select("*").gte("date",from).lte("date",to)]);
+ if(c.error){editor.innerHTML='<div class="msg err">'+esc(c.error.message)+'</div>';return} (c.data||[]).forEach(r=>rows[r.date]=r);(mu.data||[]).forEach(r=>mus[r.date]=r);render();
+}
+function render(){
+ const y=view.getFullYear(),m=view.getMonth();month.textContent=new Date(y,m,1).toLocaleDateString("en-IN",{month:"long",year:"numeric"});days.innerHTML="";
+ for(let i=0;i<new Date(y,m,1).getDay();i++)days.innerHTML+='<div class="day past"></div>';
+ for(let d=1;d<=new Date(y,m+1,0).getDate();d++){const k=key(y,m,d),r=rows[k]||{morning_status:"available",evening_status:"available"},mu=mus[k],past=new Date(y,m,d)<today();let e=document.createElement("div");e.className="day"+(past?" past":"")+(selected===k?" selected":"");e.innerHTML=`<b>${d}</b><div class="circle ${shape(r)}"></div>${mu?.is_muhurtham||mu?.admin_override===true?"⭐":""}`;if(!past)e.onclick=()=>edit(k,r,mu);days.appendChild(e)}
+}
+async function edit(k,r,mu){
+ window.pendingBookingEnquiryId=null;
+ selected=k;render();setTimeout(()=>document.getElementById("editor")?.scrollIntoView({behavior:"smooth",block:"start"}),40);
+ const {data:priv}=await sb.from("booking_details").select("*").eq("date",k);const pm=(priv||[]).find(x=>x.slot==="morning")||{},pe=(priv||[]).find(x=>x.slot==="evening")||{};
+ const auto=mu?.is_muhurtham===true, override=mu?.admin_override;
+ editor.innerHTML=`<div class="h">${new Date(k+"T00:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"})}</div>
+ <div class="small">Muhurtham dates are preloaded from the KVN source-verified database. Booking status is always controlled manually by KVN staff.</div>
+ <div class="grid"><div><label>Morning</label><select id="ms"><option value="available" ${r.morning_status==="available"?"selected":""}>Available</option><option value="booked" ${r.morning_status==="booked"?"selected":""}>Booked</option></select></div><div><label>Evening</label><select id="es"><option value="available" ${r.evening_status==="available"?"selected":""}>Available</option><option value="booked" ${r.evening_status==="booked"?"selected":""}>Booked</option></select></div></div>
+ <label>Muhurtham display</label><select id="muOverride"><option value="auto" ${override===null||override===undefined?"selected":""}>Database date (${auto?"⭐ Yes":"No"})</option><option value="yes" ${override===true?"selected":""}>Force ⭐ ON</option><option value="no" ${override===false?"selected":""}>Force ⭐ OFF</option></select>
+ ${mu?.score?`<div class="small">Calculated score: ${esc(mu.score)} • ${esc(mu.start_time||"")} ${mu.end_time?"– "+esc(mu.end_time):""}</div>`:""}
+ <label>Morning Event / Customer</label><input id="mi" value="${esc(pm.event_name)}"><label>Evening Event / Customer</label><input id="ei" value="${esc(pe.event_name)}"><label>Manager Notes <span class="small">(private)</span></label><textarea id="notes">${esc(pm.manager_notes||pe.manager_notes||"")}</textarea>
+ <div class="editor-actions"><button class="btn" style="width:100%;margin-top:12px" id="save">Save Changes</button></div><div id="saveMsg"></div>`;
+ document.getElementById("save").onclick=()=>save(k,mu);
+}
+async function save(k,mu){
+ const uid=(await sb.auth.getUser()).data.user.id;const row={date:k,morning_status:ms.value,evening_status:es.value,updated_by:uid,updated_at:new Date().toISOString()};let {error}=await sb.from("calendar_dates").upsert(row,{onConflict:"date"});if(error){saveMsg.innerHTML='<div class="msg err">'+esc(error.message)+'</div>';return}
+ for(const [slot,event_name] of [["morning",mi.value],["evening",ei.value]]){const q=await sb.from("booking_details").upsert({date:k,slot,event_name:event_name||null,manager_notes:notes.value||null,updated_by:uid,updated_at:new Date().toISOString()},{onConflict:"date,slot"});if(q.error){saveMsg.innerHTML='<div class="msg err">'+esc(q.error.message)+'</div>';return}}
+ const ov=muOverride.value==="auto"?null:muOverride.value==="yes";const q=await sb.from("muhurtham_dates").upsert({date:k,is_muhurtham:mu?.is_muhurtham??false,admin_override:ov,updated_by:uid,generated_at:mu?.generated_at||new Date().toISOString(),source:mu?.source||"KVN Admin Override"},{onConflict:"date"});
+ if(q.error){saveMsg.innerHTML='<div class="msg err">'+esc(q.error.message)+'</div>';return}
+ if(window.pendingBookingEnquiryId){
+  const uq=await sb.from("enquiries").update({status:"confirmed",updated_at:new Date().toISOString()}).eq("id",window.pendingBookingEnquiryId);
+  if(uq.error){saveMsg.innerHTML='<div class="msg err">Calendar saved, but enquiry status could not be updated: '+esc(uq.error.message)+'</div>';return}
+  window.pendingBookingEnquiryId=null;
+}
+ saveMsg.innerHTML='<div class="msg ok">Saved. The confirmed booking is now public and the enquiry has been closed.</div>';
+ await loadMonth();
+ await loadEnquiries();
+ setTimeout(()=>edit(k,rows[k],mus[k]),250)
+}
+function statusLabel(status){
+ return ({new:"New",contacted:"Contacted",advance_paid:"Advance Paid",declined:"Declined",confirmed:"Confirmed"}[status]||status||"New");
+}
+function statusIsResolved(status){ return status && status !== "new"; }
+async function loadEnquiries(){
+ const box=document.getElementById("enquiries");
+ box.innerHTML='<div class="small">Refreshing enquiries…</div>';
+ const {data,error}=await sb.from("enquiries").select("*").order("created_at",{ascending:false}).limit(100);
+ if(error){box.innerHTML='<div class="msg err">'+esc(error.message)+'</div>';return}
+ if(!data?.length){box.innerHTML='<div class="small">No enquiries yet.</div>';return}
+ data.sort((a,b)=>{const ar=statusIsResolved(a.status)?1:0,br=statusIsResolved(b.status)?1:0;if(ar!==br)return ar-br;return new Date(b.created_at)-new Date(a.created_at)});
+ box.innerHTML=data.map(e=>{
+   const resolved=statusIsResolved(e.status);
+   const canBook=e.status==="advance_paid";
+   return `<div class="enq ${resolved?'resolved':''}">
+    <div class="row"><b>${esc(e.name)}</b><span class="status">${esc(statusLabel(e.status))}</span></div>
+    <div class="small">${esc(e.event_date)} • ${esc(e.slot)} • ${esc(e.event_type)}</div>
+    <div class="small">📞 ${esc(e.phone)} ${e.email?"• ✉ "+esc(e.email):""}</div>
+    ${e.guest_count?`<div class="small">Guests: ${esc(e.guest_count)}</div>`:""}
+    ${e.message?`<p>${esc(e.message)}</p>`:""}
+    <label>Status</label>
+    <select onchange="updateStatus('${e.id}',this.value)" ${e.status==="confirmed"?'disabled':''}>
+      <option value="new" ${e.status==="new"?'selected':''}>New</option>
+      <option value="contacted" ${e.status==="contacted"?'selected':''}>Contacted</option>
+      <option value="advance_paid" ${e.status==="advance_paid"?'selected':''}>Advance Paid</option>
+      <option value="declined" ${e.status==="declined"?'selected':''}>Declined</option>
+      <option value="confirmed" ${e.status==="confirmed"?'selected':''}>Confirmed</option>
+    </select>
+    ${canBook?`<button class="btn" style="width:100%;margin-top:9px" onclick="openBookingFromEnquiry('${e.id}')">Enter Confirmed Booking in Calendar</button>`:""}
+    ${e.status==="confirmed"?`<div class="msg ok">Booking entered in the calendar.</div>`:""}
+   </div>`;
+ }).join("");
+}
+async function updateStatus(id,status){
+ const {error}=await sb.from("enquiries").update({status,updated_at:new Date().toISOString()}).eq("id",id);
+ if(error){notify("Unable to update enquiry: "+error.message);return}
+ await loadEnquiries();
+}
+async function openBookingFromEnquiry(enquiryId){
+ const {data:e,error}=await sb.from("enquiries").select("id,event_date,slot,name,event_type").eq("id",enquiryId).single();
+ if(error||!e){notify("Unable to open this enquiry in the calendar");return}
+ const d=new Date(e.event_date+"T00:00:00");
+ view=new Date(d.getFullYear(),d.getMonth(),1);
+ document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));
+ document.querySelector('.tabs button[data-tab="calendarTab"]').classList.add("active");
+ document.getElementById("calendarTab").classList.remove("hidden");
+ document.getElementById("enquiryTab").classList.add("hidden");
+ await loadMonth();
+ const current=rows[e.event_date]||{morning_status:"available",evening_status:"available"};
+ await edit(e.event_date,current,mus[e.event_date]);
+ if(e.slot==="Morning" || e.slot==="Full Day") document.getElementById("ms").value="booked";
+ if(e.slot==="Evening" || e.slot==="Full Day") document.getElementById("es").value="booked";
+ if(e.slot==="Morning" || e.slot==="Full Day") document.getElementById("mi").value=e.name+(e.event_type?" • "+e.event_type:"");
+ if(e.slot==="Evening" || e.slot==="Full Day") document.getElementById("ei").value=e.name+(e.event_type?" • "+e.event_type:"");
+ document.getElementById("saveMsg").innerHTML='<div class="msg ok">Confirmed booking loaded. Verify the slot and click Save Changes to publish it to the calendar.</div>';
+ // Remember which enquiry opened this editor so Save can close the lead.
+ window.pendingBookingEnquiryId=enquiryId;
+}
+const refreshBtn=document.getElementById("refresh");
+refreshBtn.addEventListener("click",async()=>{
+ refreshBtn.disabled=true;refreshBtn.textContent="Refreshing…";
+ try{await loadEnquiries()}finally{refreshBtn.disabled=false;refreshBtn.textContent="Refresh"}
+});
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("manager-sw.js",{scope:"/"}).catch(()=>{}); }
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;installBtn.classList.remove("hidden");});
+installBtn?.addEventListener("click",async()=>{if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;installBtn.classList.add("hidden");});
+window.addEventListener("appinstalled",()=>{installBtn.classList.add("hidden");});
+start();
+</script></body></html>
