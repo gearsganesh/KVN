@@ -1,4 +1,4 @@
-const CACHE="kvn-manager-v8";
+const CACHE="kvn-manager-v9";
 const APP_SHELL=[
   "/manager.html",
   "/config.js",
