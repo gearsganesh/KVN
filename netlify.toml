@@ -1,0 +1,14 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/admin"
+  to = "/manager.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/manager"
+  to = "/manager.html"
+  status = 200
+  force = true

@@ -1,0 +1,38 @@
+{
+  "id": "/",
+  "name": "KVN Weddings & Conventions",
+  "short_name": "KVN Weddings",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fdf5e6",
+  "theme_color": "#6b1637",
+  "description": "KVN Weddings & Conventions in Velappanchavadi, Chennai.",
+  "icons": [
+    {
+      "src": "/assets/kvn-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/kvn-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/kvn-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/kvn-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
