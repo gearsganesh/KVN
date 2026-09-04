@@ -144,6 +144,14 @@ window.KVN_SUPABASE_ANON_KEY = "sb_publishable_2t_AblKyPQ3fFsCxMARMiQ_56-IHCAh";
   function replacePublicSitePhotos() {
     if (!document.querySelector('.hero, #gallery, .experience-card, .intro-image')) return;
 
+    const style = document.createElement('style');
+    style.textContent = `
+      .hero::before {
+        background: linear-gradient(90deg,rgba(61,13,33,.78),rgba(107,22,55,.56)), url('assets/hero.webp') center/cover no-repeat !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     const photoAssets = [
       'assets/hero.webp',
       'assets/lobby_chandelier.webp',
@@ -158,18 +166,8 @@ window.KVN_SUPABASE_ANON_KEY = "sb_publishable_2t_AblKyPQ3fFsCxMARMiQ_56-IHCAh";
       'assets/hall_horizontal.webp'
     ];
 
-    // Hero uses a CSS background image rather than an <img> element.
-    const hero = document.querySelector('.hero');
-    if (hero) {
-      hero.style.setProperty(
-        'background-image',
-        "linear-gradient(90deg,rgba(61,13,33,.78),rgba(107,22,55,.56)),url('assets/hero.webp')",
-        'important'
-      );
-    }
-
     const remotePhotos = [...document.querySelectorAll('img')].filter(img =>
-      /images\\.unsplash\\.com/i.test(img.getAttribute('src') || '')
+      /images\.unsplash\.com/i.test(img.getAttribute('src') || '')
     );
 
     remotePhotos.forEach((img, index) => {
