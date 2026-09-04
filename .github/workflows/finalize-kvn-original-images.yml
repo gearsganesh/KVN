@@ -1,0 +1,78 @@
+name: Finalize KVN original venue imagery
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  replace-images:
+    if: "!contains(github.event.head_commit.message, '[skip-kvn-photo-replace]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Replace every remaining remote photo
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          # Hero background: supplied KVN chandelier/hall photo.
+          hero_pattern = r"url\('https://images\.unsplash\.com/[^']+'\) center/cover no-repeat"
+          s, hero_count = re.subn(
+              hero_pattern,
+              "url('assets/hero.webp') center/cover no-repeat",
+              s,
+              count=1,
+          )
+          if hero_count != 1:
+              raise SystemExit(f'Expected 1 remote hero image, found {hero_count}')
+
+          # Every <img> that still points to Unsplash, in page order.
+          replacements = [
+              'assets/lobby_chandelier.webp',
+              'assets/hall_horizontal.webp',
+              'assets/hall_rear.webp',
+              'assets/hall_vertical.webp',
+              'assets/hall2_wide.webp',
+              'assets/hall2_horizontal.webp',
+              'assets/dining_area.webp',
+              'assets/dining_area_2.webp',
+              'assets/chandelier.webp',
+              'assets/hall_horizontal.webp',
+          ]
+
+          pattern = r'https://images\.unsplash\.com/[^"\']+'
+          matches = list(re.finditer(pattern, s))
+          if len(matches) != len(replacements):
+              raise SystemExit(f'Expected {len(replacements)} remaining remote image URLs, found {len(matches)}')
+
+          for match, replacement in reversed(list(zip(matches, replacements))):
+              s = s[:match.start()] + replacement + s[match.end():]
+
+          # No external photo URLs should remain in the page.
+          remaining = re.findall(r'https://images\.unsplash\.com/[^"\' )]+', s)
+          if remaining:
+              raise SystemExit(f'Remote image URLs remain: {remaining}')
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Remove temporary workflow and commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/finalize-kvn-original-images.yml
+          git add index.html
+          git commit -m "Use original KVN venue photos throughout [skip-kvn-photo-replace]"
+          git push origin HEAD:main
