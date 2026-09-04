@@ -1,5 +1,8 @@
 name: Install KVN actual photos
 on:
+  push:
+    branches:
+      - feature/replace-with-actual-kvn-photos
   workflow_dispatch:
 permissions:
   contents: write
