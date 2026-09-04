@@ -1,32 +1,45 @@
 name: Install KVN actual photos
 on:
-  push:
-    branches:
-      - feature/replace-with-actual-kvn-photos
+  pull_request:
+    types: [opened, synchronize]
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
   install:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/replace-with-actual-kvn-photos
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
       - name: Extract actual photos
         run: |
           unzip -o kvn_assets_deploy.zip
           rm kvn_assets_deploy.zip
-      - name: Commit actual photos
+      - name: Replace hero background with supplied venue photo
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+          old = "background:linear-gradient(90deg,rgba(61,13,33,.78),rgba(107,22,55,.56)),url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=2200&q=88') center/cover no-repeat"
+          new = "background:linear-gradient(90deg,rgba(61,13,33,.78),rgba(107,22,55,.56)),url('assets/hero.webp') center/cover no-repeat"
+          if old not in s:
+              raise SystemExit('Hero background pattern not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+      - name: Commit actual photos and hero
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/*.webp
-          git commit -m "Replace KVN gallery photos with supplied venue images" || exit 0
-          git push origin HEAD:feature/replace-with-actual-kvn-photos
-      - name: Remove installer workflow
+          git add assets/*.webp index.html
+          git commit -m "Replace KVN website photos with supplied venue images" || exit 0
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+      - name: Remove installer workflow and staging archive
         run: |
-          git rm .github/workflows/install-kvn-photos.yml
-          git commit -m "Remove photo installer workflow" || exit 0
-          git push origin HEAD:feature/replace-with-actual-kvn-photos
+          git rm .github/workflows/install-kvn-photos.yml || true
+          git rm kvn_assets_deploy.zip || true
+          git commit -m "Remove temporary KVN photo installer" || exit 0
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
