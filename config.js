@@ -136,3 +136,53 @@ window.KVN_SUPABASE_ANON_KEY = "sb_publishable_2t_AblKyPQ3fFsCxMARMiQ_56-IHCAh";
     initBackground();
   }
 })();
+
+// Public KVN site: force every venue photograph to use the supplied original images.
+// This is intentionally scoped to the public page so Admin / Manager screens keep
+// their existing behaviour.
+(() => {
+  function replacePublicSitePhotos() {
+    if (!document.querySelector('.hero, #gallery, .experience-card, .intro-image')) return;
+
+    const photoAssets = [
+      'assets/hero.webp',
+      'assets/lobby_chandelier.webp',
+      'assets/hall_horizontal.webp',
+      'assets/hall_rear.webp',
+      'assets/hall_vertical.webp',
+      'assets/hall2_wide.webp',
+      'assets/hall2_horizontal.webp',
+      'assets/dining_area.webp',
+      'assets/dining_area_2.webp',
+      'assets/chandelier.webp',
+      'assets/hall_horizontal.webp'
+    ];
+
+    // Hero uses a CSS background image rather than an <img> element.
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      hero.style.setProperty(
+        'background-image',
+        "linear-gradient(90deg,rgba(61,13,33,.78),rgba(107,22,55,.56)),url('assets/hero.webp')",
+        'important'
+      );
+    }
+
+    const remotePhotos = [...document.querySelectorAll('img')].filter(img =>
+      /images\\.unsplash\\.com/i.test(img.getAttribute('src') || '')
+    );
+
+    remotePhotos.forEach((img, index) => {
+      if (photoAssets[index + 1]) {
+        img.src = photoAssets[index + 1];
+        img.removeAttribute('srcset');
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', replacePublicSitePhotos, {once:true});
+  } else {
+    replacePublicSitePhotos();
+  }
+})();
