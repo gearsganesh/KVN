@@ -5,71 +5,44 @@ window.KVN_SUPABASE_URL = "https://xtdvdxpabxjryaqkcrcc.supabase.co";
 window.KVN_SUPABASE_ANON_KEY = "sb_publishable_2t_AblKyPQ3fFsCxMARMiQ_56-IHCAh";
 
 // Booking workflow compatibility layer.
-// The manager page historically updated enquiries directly, which changed the
-// enquiry status but did not create/release the corresponding calendar booking.
-// Route those status changes through the transactional Supabase RPC instead.
 (() => {
   const originalCreateClient = window.supabase?.createClient;
   if (!originalCreateClient) return;
-
   window.supabase.createClient = (...args) => {
     const client = originalCreateClient(...args);
     const originalFrom = client.from.bind(client);
-
     client.from = (table) => {
       const builder = originalFrom(table);
       if (table !== "enquiries") return builder;
-
       const originalUpdate = builder.update.bind(builder);
       builder.update = (values) => {
-        if (!values || typeof values.status !== "string") {
-          return originalUpdate(values);
-        }
-
+        if (!values || typeof values.status !== "string") return originalUpdate(values);
         const updateBuilder = originalUpdate(values);
         const originalEq = updateBuilder.eq.bind(updateBuilder);
         updateBuilder.eq = (column, value) => {
           if (column === "id") {
-            return client.rpc("update_enquiry_status", {
-              p_enquiry_id: value,
-              p_status: values.status
-            });
+            return client.rpc("update_enquiry_status", { p_enquiry_id: value, p_status: values.status });
           }
           return originalEq(column, value);
         };
         return updateBuilder;
       };
-
       return builder;
     };
-
     return client;
   };
 })();
 
-// Keep the Admin / Manager dashboard visually consistent with the public KVN site.
-// Uses the same Vanta Birds effect, colors, density and transparent background.
+// Keep Admin / Manager visually consistent with the public KVN site.
 (() => {
   const style = document.createElement('style');
   style.textContent = `
     html, body { background: #fdf5e6 !important; }
     body { background: transparent !important; }
-    #vanta-bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      opacity: .85;
-      overflow: hidden;
-    }
+    #vanta-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .85; overflow: hidden; }
     #vanta-bg canvas { display:block; pointer-events:none; }
-    body::before {
-      z-index: 0 !important;
-    }
-    .app {
-      position: relative;
-      z-index: 2;
-    }
+    body::before { z-index: 0 !important; }
+    .app { position: relative; z-index: 2; }
   `;
   document.head.appendChild(style);
 
@@ -97,53 +70,26 @@ window.KVN_SUPABASE_ANON_KEY = "sb_publishable_2t_AblKyPQ3fFsCxMARMiQ_56-IHCAh";
       bg.id = 'vanta-bg';
       document.body.insertBefore(bg, document.body.firstChild);
     }
-
     try {
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
       await loadScript('https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.birds.min.js');
-
       if (!window.VANTA?.BIRDS || window.KVN_VANTA) return;
-
       window.KVN_VANTA = window.VANTA.BIRDS({
-        el: '#vanta-bg',
-        mouseControls: false,
-        touchControls: false,
-        gyroControls: false,
-        minHeight: 200,
-        minWidth: 200,
-        scale: 1,
-        scaleMobile: 1,
-        backgroundAlpha: 0,
-        color1: 0xe8a52e,
-        color2: 0x6b1637,
-        colorMode: 'variance',
-        birdSize: 1.5,
-        wingSpan: 24,
-        speedLimit: 3.4,
-        separation: 26,
-        alignment: 20,
-        cohesion: 20,
-        quantity: 5
+        el: '#vanta-bg', mouseControls: false, touchControls: false, gyroControls: false,
+        minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, backgroundAlpha: 0,
+        color1: 0xe8a52e, color2: 0x6b1637, colorMode: 'variance', birdSize: 1.5,
+        wingSpan: 24, speedLimit: 3.4, separation: 26, alignment: 20, cohesion: 20, quantity: 5
       });
-    } catch (e) {
-      console.warn('KVN admin background failed to initialise', e);
-    }
+    } catch (e) { console.warn('KVN admin background failed to initialise', e); }
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initBackground, {once:true});
-  } else {
-    initBackground();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initBackground, {once:true});
+  else initBackground();
 })();
 
-// Public KVN site: force every venue photograph to use the supplied original images.
-// This is intentionally scoped to the public page so Admin / Manager screens keep
-// their existing behaviour.
+// Public KVN site: use the exact image filenames supplied for the public website.
 (() => {
   function replacePublicSitePhotos() {
     if (!document.querySelector('.hero, #gallery, .experience-card, .intro-image')) return;
-
     const style = document.createElement('style');
     style.textContent = `
       .hero::before {
@@ -153,34 +99,28 @@ window.KVN_SUPABASE_ANON_KEY = "sb_publishable_2t_AblKyPQ3fFsCxMARMiQ_56-IHCAh";
     document.head.appendChild(style);
 
     const photoAssets = [
-      'assets/hero.webp',
-      'assets/lobby_chandelier.webp',
-      'assets/hall_horizontal.webp',
-      'assets/hall_rear.webp',
-      'assets/hall_vertical.webp',
-      'assets/hall2_wide.webp',
-      'assets/hall2_horizontal.webp',
-      'assets/dining_area.webp',
-      'assets/dining_area_2.webp',
+      'assets/entrance.webp',
+      'assets/main_hall.webp',
+      'assets/majestic_hall.webp',
+      'assets/hall_seating.webp',
+      'assets/hall_lobby.webp',
+      'assets/love_stage.webp',
       'assets/chandelier.webp',
-      'assets/hall_horizontal.webp'
+      'assets/feature_wall.webp',
+      'assets/collage.webp',
+      'assets/moments.webp'
     ];
 
     const remotePhotos = [...document.querySelectorAll('img')].filter(img =>
       /images\.unsplash\.com/i.test(img.getAttribute('src') || '')
     );
-
     remotePhotos.forEach((img, index) => {
-      if (photoAssets[index + 1]) {
-        img.src = photoAssets[index + 1];
+      if (photoAssets[index]) {
+        img.src = photoAssets[index];
         img.removeAttribute('srcset');
       }
     });
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', replacePublicSitePhotos, {once:true});
-  } else {
-    replacePublicSitePhotos();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', replacePublicSitePhotos, {once:true});
+  else replacePublicSitePhotos();
 })();
